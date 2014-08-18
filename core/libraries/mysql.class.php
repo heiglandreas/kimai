@@ -140,12 +140,12 @@ class MySQL
 	 * @param array $valuesArray An array containing the column names.
 	 * @param boolean $addQuotes (Optional) TRUE to add quotes
 	 * @param boolean $showAlias (Optional) TRUE to show column alias
+     * @param string  $quote     (Optional) Which quoting-character shall be used
+     *
 	 * @return string Returns the SQL column list
 	 */
-	static private function BuildSQLColumns($columns, $addQuotes = true, $showAlias = true) {
-		if ($addQuotes) {
-			$quote = "`";
-		} else {
+	static private function BuildSQLColumns($columns, $addQuotes = true, $showAlias = true, $quote = '`') {
+		if (! $addQuotes) {
 			$quote = "";
 		}
 		switch (gettype($columns)) {
@@ -204,7 +204,7 @@ class MySQL
 	 */
 	static public function BuildSQLInsert($tableName, $valuesArray) {
 		$columns = self::BuildSQLColumns(array_keys($valuesArray));
-		$values  = self::BuildSQLColumns($valuesArray, false, false);
+		$values  = self::BuildSQLColumns($valuesArray, true, false, '\'');
 		$sql = "INSERT INTO `" . $tableName .
 			   "` (" . $columns . ") VALUES (" . $values . ")";
 		return $sql;

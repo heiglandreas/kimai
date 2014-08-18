@@ -2132,19 +2132,19 @@ class Kimai_Database_Mysql extends Kimai_Database_Abstract {
       $whereClauses = array();
 
       if (count($users) > 0) {
-        $whereClauses[] = "userID in (".implode(',',$users).")";
+        $whereClauses[] = "timesheet.userID in (".implode(',',$users).")";
       }
 
       if (count($customers) > 0) {
-        $whereClauses[] = "customerID in (".implode(',',$customers).")";
+        $whereClauses[] = "customer.customerID in (".implode(',',$customers).")";
       }
 
       if (count($projects) > 0) {
-        $whereClauses[] = "projectID in (".implode(',',$projects).")";
+        $whereClauses[] = "project.projectID in (".implode(',',$projects).")";
       }
 
       if (count($activities) > 0) {
-        $whereClauses[] = "activityID in (".implode(',',$activities).")";
+        $whereClauses[] = "activity.activityID in (".implode(',',$activities).")";
       }
 
       return $whereClauses;
@@ -2204,7 +2204,7 @@ class Kimai_Database_Mysql extends Kimai_Database_Abstract {
       }
       
       
-      $select = "SELECT timeSheet.*, status.status, customer.name AS customerName, customer.customerID as customerID, activity.name AS activityName,
+      $select = "SELECT timesheet.*, status.status, customer.name AS customerName, customer.customerID as customerID, activity.name AS activityName,
                         project.name AS projectName, project.comment AS projectComment, user.name AS userName, user.alias AS userAlias ";
       
       if($countOnly) {
@@ -2214,11 +2214,11 @@ class Kimai_Database_Mysql extends Kimai_Database_Abstract {
                        
       $query = "$select
                 FROM ${p}timeSheet AS timeSheet
-                Join ${p}projects AS project USING (projectID)
-                Join ${p}customers AS customer USING (customerID)
-                Join ${p}users AS user USING(userID)
-                Join ${p}statuses AS status USING(statusID)
-                Join ${p}activities AS activity USING(activityID) "
+                LEFT JOIN ${p}projects AS project ON project.projectID = timesheet.projectID
+                LEFT JOIN ${p}customers AS customer on customer.customerID = project.customerID
+                LEFT JOIN ${p}users AS user ON user.userID = timesheet.userID
+                LEFT JOIN ${p}statuses AS status ON status.statusID = timesheet.statusID
+                LEFT JOIN ${p}activities AS activity ON activity.activityID = timesheet.activityID "
                 .(count($whereClauses)>0?" WHERE ":" ").implode(" AND ",$whereClauses).
                 ' ORDER BY start '.($reverse_order?'ASC ':'DESC ') . $limit.';';
 
