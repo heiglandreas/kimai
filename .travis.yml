@@ -13,7 +13,7 @@ before_script:
  - ./.travis.install.sh
 
 script:
- - ./vendor/bin/phpunit --coverage-text
+ - ./vendor/bin/phpunit --configuration=phpunit.xml.travis
 
 matrix:
  allow_failures:
